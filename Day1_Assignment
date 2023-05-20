@@ -1,0 +1,107 @@
+//recursive solution
+public class PascalTriangle {
+    public static void main(String[] args) {
+        int numRows = 5; // Number of rows to display
+
+        for (int i = 0; i < numRows; i++) {
+            for (int j = 0; j <= i; j++) {
+                System.out.print(pascalValue(i, j) + " ");
+            }
+            System.out.println();
+        }
+    }
+
+    public static int pascalValue(int row, int col) {
+        if (col == 0 || col == row) {
+            return 1; // Base case: the first and last element in each row is always 1
+        } else {
+            // Recursive case: calculate the value based on the two values above it
+            return pascalValue(row - 1, col - 1) + pascalValue(row - 1, col);
+        }
+    }
+}
+
+//memoization solution
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class PascalTriangleMemoization {
+
+    private static Map<String, Integer> memo = new HashMap<>();
+
+    public static int calculatePascalValue(int row, int col) {
+        String key = row + "-" + col;
+        if (memo.containsKey(key)) {
+            return memo.get(key);
+        } else if (col == 0 || col == row) {
+            memo.put(key, 1);
+            return 1;
+        } else {
+            int value = calculatePascalValue(row - 1, col - 1) + calculatePascalValue(row - 1, col);
+            memo.put(key, value);
+            return value;
+        }
+    }
+
+    public static void printPascalTriangle(int numRows) {
+        for (int i = 0; i < numRows; i++) {
+            for (int j = 0; j <= i; j++) {
+                int value = calculatePascalValue(i, j);
+                System.out.print(value + " ");
+            }
+            System.out.println();
+        }
+    }
+
+    public static void main(String[] args) {
+        int numRows = 5;
+        printPascalTriangle(numRows);
+    }
+}
+
+
+//itervative solution
+
+import java.util.Scanner;
+
+public class PascalTriangle {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter the number of rows for Pascal's triangle: ");
+        int numRows = scanner.nextInt();
+        
+        generatePascalTriangle(numRows);
+    }
+    
+    public static void generatePascalTriangle(int numRows) {
+        int[][] triangle = new int[numRows][];
+        
+        // Initialize the triangle with appropriate size
+        for (int i = 0; i < numRows; i++) {
+            triangle[i] = new int[i + 1];
+        }
+        
+        // Fill the triangle with values
+        for (int i = 0; i < numRows; i++) {
+            for (int j = 0; j <= i; j++) {
+                if (j == 0 || j == i) {
+                    // First and last element in each row is always 1
+                    triangle[i][j] = 1;
+                } else {
+                    // Calculate the value based on the previous row
+                    triangle[i][j] = triangle[i - 1][j - 1] + triangle[i - 1][j];
+                }
+            }
+        }
+        
+        // Display the triangle
+        System.out.println("Pascal's triangle:");
+        for (int i = 0; i < numRows; i++) {
+            for (int j = 0; j <= i; j++) {
+                System.out.print(triangle[i][j] + " ");
+            }
+            System.out.println();
+        }
+    }
+}
