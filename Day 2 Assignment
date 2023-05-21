@@ -1,0 +1,19 @@
+// 1. search by place
+ public List<Product> getProductWithplace(String place) {
+ return products.stream().filter(p-> p.getPlace().toLowerCase().equals(place.tolowercase())).collect(Collectors.toList());
+ }
+
+// 2. search products out of warranty
+
+ public List<Product> getProductWithoutWarranty() {
+ int currentYear = Year.now().getValue();
+ return products.stream().filter(p -> p.getWarranty() < currentYear).collect(Collectors.toList());
+}
+
+// 3. convert to stream API
+
+ public List<Product> getProductWithText(String text) {
+ String s = text.toLowerCase();
+ return products.stream().filter(p->p.getName().toLowerCase().contains(s)|| p.getType().toLowerCase().contains(s) || 
+ p.getPlace().toLowerCase().contains(s)).collect(Collectors.toList());
+ }
