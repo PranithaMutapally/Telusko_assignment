@@ -1,0 +1,49 @@
+#we need to include this code in productservice class 
+
+# We need to find the products with the given name
+
+ public Product getProductbyname(String name) {
+
+    return db.findByName(name);
+  }
+
+# We need to find the products with the given text
+
+  public List<Product> getProductbytext(String text) {
+    String str = text.toLowerCase();
+    return db.findByText(str);
+  }
+
+# We need to find the products which are out of warranty
+
+  public List<Product> getProductsoutofWarranty() {
+
+    return db.findproductsoutofWarranty();
+  }
+
+# We need to find the products with the given place
+
+  public List<Product> getAbyPlace(String place) {
+
+    return db.findbyplace(place.toLowerCase());
+  }
+  
+  
+  #for all the methods which we have created in the productServices class we need to write a sql query to fetch the products from the database
+  
+  #we need to include this code in productDB class
+  
+  @Repository
+public interface ProductDB extends JpaRepository<Product, Integer> {
+  Product findByName(String name);
+
+  @Query("SELECT p FROM Product p WHERE p.warranty<YEAR(CURRENT_DATE)")
+  java.util.List<Product> findproductsoutofWarranty();
+
+  @Query("SELECT p FROM Product p WHERE LOWER(p.place) LIKE %:place%")
+  java.util.List<Product> findbyplace(String place);
+
+  @Query("SELECT p FROM Product p WHERE LOWER(p.name) LIKE %:text% OR LOWER(p.type) LIKE %:text% OR LOWER(p.place) LIKE %:text%")
+  java.util.List<Product> findByText(String text);
+
+}
