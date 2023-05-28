@@ -1,0 +1,106 @@
+1.Set up the project and add the equired dependencies to pom.xml file
+
+<dependencies>
+  <dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-webmvc</artifactId>
+    <version>5.3.9</version>
+  </dependency>
+  
+  <dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-thymeleaf</artifactId>
+    <version>2.5.2</version>
+  </dependency>
+
+  <dependency>
+    <groupId>org.apache.commons</groupId>
+    <artifactId>commons-lang3</artifactId>
+    <version>3.12.0</version>
+  </dependency>
+</dependencies>
+
+2.Create a controller
+
+import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.view.RedirectView;
+
+import java.util.HashMap;
+import java.util.Map;
+
+@Controller
+public class UrlShortenerController {
+    private Map<String, String> urlMap = new HashMap<>();
+
+    @GetMapping("/")
+    public String showForm() {
+        return "url_form";
+    }
+
+    @PostMapping("/shorten")
+    public String shortenUrl(@RequestParam("url") String originalUrl, Model model) {
+        String shortUrl = generateShortUrl();
+        urlMap.put(shortUrl, originalUrl);
+        model.addAttribute("shortUrl", shortUrl);
+        return "url_form";
+    }
+
+    @GetMapping("/{shortUrl}")
+    public RedirectView redirect(@RequestParam String shortUrl) {
+        String originalUrl = urlMap.get(shortUrl);
+        if (originalUrl != null) {
+            return new RedirectView(originalUrl);
+        } else {
+            return new RedirectView("/");
+        }
+    }
+
+    private String generateShortUrl() {
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        return RandomStringUtils.random(6, characters);
+    }
+}
+
+
+3.Create two Thymeleaf templates: url_form.html and redirect.html
+
+
+*url_form.html
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>URL Shortener</title>
+</head>
+<body>
+    <h1>URL Shortener</h1>
+
+    <form th:action="@{/shorten}" method="post">
+        <input type="text" name="url" placeholder="Enter URL" required>
+        <button type="submit">Shorten</button>
+    </form>
+
+    <h2 th:if="${shortUrl}">Shortened URL: <a th:href="@{'/' + ${shortUrl}}" th:text="@{'/' + ${shortUrl}}"></a></h2>
+</body>
+</html>
+
+*redirect.html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Redirecting...</title>
+</head>
+<body>
+    <h1>Redirecting...</h1>
+</
+
+
+
